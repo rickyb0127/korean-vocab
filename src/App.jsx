@@ -7,9 +7,9 @@ import FlashCard from "./components/FlashCard";
 function App() {
 
   return (
-    <div className="container bg-slate-50">
+    <div className="container">
       <div className="py-3">
-        <h1 className="text-center text-xl">Korean Vocab Practice</h1>
+        <h1 className="text-center text-2xl">Korean Vocab Practice</h1>
       </div>
       <FlashCard />
     </div>
