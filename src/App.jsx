@@ -3,15 +3,20 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import FlashCard from "./components/FlashCard";
+import NavBar from './components/NavBar';
+import { AuthProvider } from './AuthContext';
 
 function App() {
-
   return (
-    <div className="container">
-      <div className="py-3">
-        <h1 className="text-center text-2xl">Korean Vocab Practice</h1>
-      </div>
-      <FlashCard />
+    <div>
+      <AuthProvider>
+        <NavBar />
+        <div className="container">
+          <div className="py-8">
+            <FlashCard />
+          </div>
+        </div>
+      </AuthProvider>
     </div>
   )
 }
