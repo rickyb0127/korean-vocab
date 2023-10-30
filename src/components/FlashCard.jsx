@@ -2,46 +2,45 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { koreanEnglish } from '../assets/koreanEnglish';
 
-function FlashCard() {
+function FlashCard(props) {
   const getNewFlashCardIndex = () => {
     return Math.floor(Math.random() * koreanEnglish.length);
   };
 
   const [flashCardIndex, setFlashCardIndex] = useState(getNewFlashCardIndex());
-  const [currentWord, setCurrentWord] = useState(null);
-  const [flashCardLanguage, setFlashCardLanguage] = useState("ENGLISH");
+  const [currentPhrase, setCurrentPhrase] = useState(null);
 
   useEffect(() => {
-    const word = koreanEnglish.find(wordSet => wordSet.id === flashCardIndex + 1);
-    setCurrentWord(word);
+    const selectedPhrase = koreanEnglish.find(phrase => phrase.id === flashCardIndex + 1);
+    setCurrentPhrase(selectedPhrase);
   }, [flashCardIndex]);
 
-  const dictate = (word) => {
+  const dictate = (phrase) => {
     const synth = window.speechSynthesis;
-    const utterThis = new SpeechSynthesisUtterance(word);
+    const utterThis = new SpeechSynthesisUtterance(phrase);
     window.speechSynthesis.cancel();
     utterThis.default = true;
     utterThis.lang = "ko-KR";
-    utterThis.rate = 0.5;
+    utterThis.rate = props.rateValue;
     synth.speak(utterThis);
   };
 
   const flashCardContents = (
-    currentWord ? 
+    currentPhrase ? 
       <>
-        { flashCardLanguage === "KOREAN" ? 
+        { props.preferredLanguage === "KOREAN" ? 
           <div className="absolute top-0 left-0 ml-1">
-            <FontAwesomeIcon onClick={() => dictate(currentWord.koreanText)} className="cursor-pointer" icon="fa-solid fa-volume-high" />
+            <FontAwesomeIcon onClick={() => dictate(currentPhrase.koreanText)} className="cursor-pointer" icon="fa-solid fa-volume-high" />
           </div> : 
         <></>}
         <div className="absolute top-0 right-0 mr-1">
           {
-            flashCardLanguage === "KOREAN" ? <span className="cursor-pointer" onClick={() => setFlashCardLanguage("ENGLISH")}>ENG</span> :
-            <span className="cursor-pointer" onClick={() => setFlashCardLanguage("KOREAN")}>KOR</span>
+            props.preferredLanguage === "KOREAN" ? <span className="cursor-pointer" onClick={() => props.setPreferredLanguage("ENGLISH")}>ENG</span> :
+            <span className="cursor-pointer" onClick={() => props.setPreferredLanguage("KOREAN")}>KOR</span>
           }
         </div>
         <div className="text-center text-[40px]">
-          { flashCardLanguage === "ENGLISH" ? currentWord.englishText : currentWord.koreanText }
+          { props.preferredLanguage === "ENGLISH" ? currentPhrase.englishText : currentPhrase.koreanText }
         </div>
         <div className="absolute bottom-0 right-0 mr-1">
           <FontAwesomeIcon onClick={() => {

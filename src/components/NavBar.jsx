@@ -6,17 +6,6 @@ import { AuthContext } from '../AuthContext';
 function NavBar(props) {
   const auth = useContext(AuthContext);
   const [showRegisterLogin, setShowRegisterLogin] = useState(false);
-  const [showUserSettings, setShowUserSettings] = useState(false);
-
-  const onProfileHover = () => {
-    const elem = document.getElementById("profile-dropdown");
-    elem.classList.remove("hidden")
-  };
-
-  const onProfileLeave = () => {
-    const elem = document.getElementById("profile-dropdown");
-    elem.classList.add("hidden")
-  };
   
   return (
     <>
@@ -33,11 +22,11 @@ function NavBar(props) {
               <div className="flex flex-shrink-0 items-center">
                 <div className="text-cyan-500">
                   { auth.signedInUser ?
-                    <div className="h-[64px] mt-[40px] cursor-pointer" onMouseEnter={() => onProfileHover()} onMouseLeave={() => onProfileLeave()}>
+                    <div id="profile-click" className="h-[64px] mt-[40px] cursor-pointer">
                       { auth.signedInUser.firstName }
-                      <div id="profile-dropdown" className="absolute hidden right-[-30px] z-[10000] mt-2 w-48 origin-top-right rounded-md bg-white text-black py-1 shadow-lg">
+                      <div id="profile-dropdown" className="absolute hidden right-[-30px] top-[58px] z-[10000] mt-2 w-48 origin-top-right rounded-md bg-white text-black py-1 shadow-lg">
                         <ul>
-                          <li onClick={() => setShowUserSettings(true)}>Settings</li>
+                          <li onClick={() => props.setShowUserSettings(true)}>Settings</li>
                           <li onClick={() => auth.signOutUser()}>Sign Out</li>
                         </ul>
                       </div>

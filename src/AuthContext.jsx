@@ -1,33 +1,21 @@
 import { createContext, useState, useEffect } from "react";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc, getDoc } from 'firebase/firestore/lite';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc, getDoc } from 'firebase/firestore/lite';
+import { auth, db } from "./assets/firebase";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [signedInUser, setSignedInUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-
-  // Firebase
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    stroageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-  }  
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const signOutUser = async() => {
     try {
       await signOut(auth);
       sessionStorage.removeItem('korean-vocab.user');
       setSignedInUser(null);
+      setCurrentUserId(null);
     } catch(err) {
       console.log(err);
     }
@@ -92,13 +80,14 @@ const AuthProvider = ({ children }) => {
     onAuthStateChanged(auth, async(user) => {
       if(user) {
         const userId = user.uid;
+        setCurrentUserId(userId);
         await fetchUserFromDb(userId);
       }
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ signedInUser, authenticateUser, signOutUser, errorMessage, setErrorMessage }}>
+    <AuthContext.Provider value={{ signedInUser, currentUserId, authenticateUser, signOutUser, errorMessage, setErrorMessage }}>
       {children}
     </AuthContext.Provider>
   );
