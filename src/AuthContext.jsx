@@ -29,6 +29,16 @@ const AuthProvider = ({ children }) => {
     }
   }
 
+  const updateUserData = async(userId, updatedUser) => {
+    const snap = await getDoc(doc(db, "users", userId));
+    if(snap.exists()) {
+      await setDoc(doc(db, "users", userId), updatedUser);
+
+      setSignedInUser(updatedUser);
+      sessionStorage.setItem('korean-vocab.user', JSON.stringify(updatedUser));
+    }
+  };
+
   const fetchUserFromDb = async(userId) => {
     const snap = await getDoc(doc(db, "users", userId));
     if(snap.exists()) {
@@ -87,7 +97,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ signedInUser, currentUserId, authenticateUser, signOutUser, errorMessage, setErrorMessage }}>
+    <AuthContext.Provider value={{ signedInUser, currentUserId, authenticateUser, signOutUser, errorMessage, setErrorMessage, updateUserData }}>
       {children}
     </AuthContext.Provider>
   );

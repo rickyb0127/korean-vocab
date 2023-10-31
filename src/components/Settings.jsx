@@ -1,7 +1,5 @@
 import { useContext } from 'react';
 import { AuthContext } from '../AuthContext';
-import { doc, setDoc, getDoc } from 'firebase/firestore/lite';
-import { db } from "../assets/firebase";
 
 function Settings(props) {
   const auth = useContext(AuthContext);
@@ -30,11 +28,12 @@ function Settings(props) {
     synth.speak(utterThis);
   };
 
-  const updateUserData = async() => {
-    if(auth.currentUserId) {
-      const snap = await getDoc(doc(db, "users", auth.currentUserId));
-      if(snap.exists()) {
-        const user = snap.data();
+  const submitForm = async(e) => {
+    e.preventDefault();
+
+    if(auth.signedInUser && auth.currentUserId) {
+      try {
+        const user = auth.signedInUser;
 
         const settings = {
           preferredLanguage: props.preferredLanguage,
@@ -46,19 +45,10 @@ function Settings(props) {
           settings
         };
 
-        await setDoc(doc(db, "users", auth.currentUserId), updatedUser);
-        sessionStorage.setItem('korean-vocab.user', JSON.stringify(updatedUser));
+        await auth.updateUserData(auth.currentUserId, updatedUser);
+      } catch(err) {
+        console.log(err);
       }
-    }
-  };
-
-  const submitForm = async(e) => {
-    e.preventDefault();
-
-    try {
-      await updateUserData();
-    } catch(err) {
-      console.log(err);
     }
   };
 
