@@ -48,6 +48,8 @@ function Settings(props) {
         await auth.updateUserData(auth.currentUserId, updatedUser);
       } catch(err) {
         console.log(err);
+      } finally {
+        props.setShowUserSettings(false);
       }
     }
   };
@@ -82,7 +84,7 @@ function Settings(props) {
           </div>
 
           <div className="pt-5">
-            <button onClick={ submitForm } className="w-[300px] bg-blue-500 rounded-sm">Submit</button>
+            <button onClick={ submitForm } className="h-[50px] w-[300px] bg-blue-500 rounded-md">Submit</button>
           </div>
         </form>
       </div>

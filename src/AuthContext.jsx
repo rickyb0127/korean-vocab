@@ -7,7 +7,6 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [signedInUser, setSignedInUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const signOutUser = async() => {
@@ -56,35 +55,19 @@ const AuthProvider = ({ children }) => {
       if(isRegister) {
         await createUserWithEmailAndPassword(auth, email, password);
 
-        try {
-          const user = {
-            firstName,
-            lastName,
-            email
-          };
-          sessionStorage.setItem('korean-vocab.user', JSON.stringify(user));
-        } catch(err) {
-          console.log(err);
-        }
+        const user = {
+          firstName,
+          lastName,
+          email
+        };
+        sessionStorage.setItem('korean-vocab.user', JSON.stringify(user));
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
     } catch(err) {
-      switch(err.code) {
-        case "auth/email-already-in-use":
-          setErrorMessage("email already in use");
-          break;
-        default:
-          setErrorMessage("something went wrong");
-      }
+      throw new Error(err.code);
     }
   }
-
-  useEffect(() => {
-    if(signedInUser) {
-      setErrorMessage("");
-    }
-  }, [signedInUser]);
 
   useEffect(() => {
     onAuthStateChanged(auth, async(user) => {
@@ -97,7 +80,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ signedInUser, currentUserId, authenticateUser, signOutUser, errorMessage, setErrorMessage, updateUserData }}>
+    <AuthContext.Provider value={{ signedInUser, currentUserId, authenticateUser, signOutUser, updateUserData }}>
       {children}
     </AuthContext.Provider>
   );

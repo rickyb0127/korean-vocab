@@ -57,8 +57,8 @@ function FlashCard(props) {
 
   return (
     <>
-      <div className="flex justify-center">
-        <div className="flex relative justify-center items-center w-[450px] h-[250px] bg-blue-300">
+      <div className="flex pt-[150px] justify-center">
+        <div className="flex relative justify-center items-center w-[450px] h-[300px] rounded-md bg-blue-300">
           { flashCardContents }
         </div>
       </div>
